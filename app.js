@@ -2,6 +2,15 @@ let listaDeNumerosSorteados = [];
 let numeroLimite = 10;
 let numeroSecreto = gerarNumeroAleatorio();
 let tentativas = 1;
+const campoChute = document.getElementById('palpite');
+const botaoChutar = document.getElementById('chutar');
+const botaoReiniciar = document.getElementById('reiniciar');
+
+document.getElementById('formulario-palpite').addEventListener('submit', (evento) => {
+    evento.preventDefault();
+    verificarChute();
+});
+botaoReiniciar.addEventListener('click', reiniciarJogo);
 
 function exibirTextoNaTela(tag, texto) {
     let campo = document.querySelector(tag);
@@ -18,20 +27,32 @@ function exibirTextoNaTela(tag, texto) {
 
 function exibirMensagemInicial() {
     exibirTextoNaTela('h1', 'Jogo do número secreto');
-    exibirTextoNaTela('p', 'Escolha um número entre 1 e 10');
+    exibirTextoNaTela('p', `Escolha um número entre 1 e ${numeroLimite}`);
 }
 
 exibirMensagemInicial();
 
 function verificarChute() {
-    let chute = document.querySelector('input').value;
-    
-    if (chute == numeroSecreto) {
+    if (botaoChutar.disabled) {
+        return;
+    }
+
+    const chute = campoChute.valueAsNumber;
+    if (!Number.isInteger(chute) || chute < 1 || chute > numeroLimite) {
+        exibirTextoNaTela('p', `Digite um número inteiro entre 1 e ${numeroLimite}.`);
+        campoChute.focus();
+        return;
+    }
+
+    if (chute === numeroSecreto) {
         exibirTextoNaTela('h1', 'Acertou!');
         let palavraTentativa = tentativas > 1 ? 'tentativas' : 'tentativa';
         let mensagemTentativas = `Você descobriu o número secreto com ${tentativas} ${palavraTentativa}!`;
         exibirTextoNaTela('p', mensagemTentativas);
-        document.getElementById('reiniciar').removeAttribute('disabled');
+        campoChute.disabled = true;
+        botaoChutar.disabled = true;
+        botaoReiniciar.disabled = false;
+        botaoReiniciar.focus();
     } else {
         if (chute > numeroSecreto) {
             exibirTextoNaTela('p', 'O número secreto é menor');
@@ -40,6 +61,7 @@ function verificarChute() {
         }
         tentativas++;
         limparCampo();
+        campoChute.focus();
     }
 }
 
@@ -60,8 +82,7 @@ function gerarNumeroAleatorio() {
 }
 
 function limparCampo() {
-    chute = document.querySelector('input');
-    chute.value = '';
+    campoChute.value = '';
 }
 
 function reiniciarJogo() {
@@ -69,7 +90,10 @@ function reiniciarJogo() {
     limparCampo();
     tentativas = 1;
     exibirMensagemInicial();
-    document.getElementById('reiniciar').setAttribute('disabled', true)
+    campoChute.disabled = false;
+    botaoChutar.disabled = false;
+    botaoReiniciar.disabled = true;
+    campoChute.focus();
 }
 
 
