@@ -44,19 +44,19 @@ function verificarChute() {
 }
 
 function gerarNumeroAleatorio() {
-    let numeroEscolhido = parseInt(Math.random() * numeroLimite + 1);
-    let quantidadeDeElementosNaLista = listaDeNumerosSorteados.length;
-
-    if (quantidadeDeElementosNaLista == numeroLimite) {
+    if (listaDeNumerosSorteados.length === numeroLimite) {
         listaDeNumerosSorteados = [];
     }
-    if (listaDeNumerosSorteados.includes(numeroEscolhido)) {
-        return gerarNumeroAleatorio();
-    } else {
-        listaDeNumerosSorteados.push(numeroEscolhido);
-        console.log(listaDeNumerosSorteados)
-        return numeroEscolhido;
-    }
+
+    const numerosDisponiveis = Array.from(
+        { length: numeroLimite },
+        (_, indice) => indice + 1
+    ).filter(numero => !listaDeNumerosSorteados.includes(numero));
+    const indiceSorteado = Math.floor(Math.random() * numerosDisponiveis.length);
+    const numeroEscolhido = numerosDisponiveis[indiceSorteado];
+
+    listaDeNumerosSorteados.push(numeroEscolhido);
+    return numeroEscolhido;
 }
 
 function limparCampo() {
